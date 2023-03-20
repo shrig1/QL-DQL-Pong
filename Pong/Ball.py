@@ -23,10 +23,17 @@ class Ball(pygame.sprite.Sprite):
         self.velocity = random_direction()
 
     def update(self, Paddle1, Paddle2):
-        if self.rect.colliderect(Paddle1.rect) or self.rect.colliderect(Paddle2.rect):
-            self.velocity = [-x for x in self.velocity]
-        
+        # if self.rect.colliderect(Paddle1.rect) or self.rect.colliderect(Paddle2.rect):
+        #     self.velocity[0] *= -1
+        if self.rect.centery == 3 or self.rect.centery == 597:
+            self.velocity[1] *= -1
+        elif self.rect.centerx <= 27 or self.rect.centerx >= 573:   
+            if (Paddle1.rect.centery - 60 < self.rect.centery < Paddle1.rect.centery + 60) or (Paddle2.rect.centery - 60 < self.rect.centery < Paddle2.rect.centery + 60):
+                self.velocity[0] *= -1
+            else:
+                return False 
         self.rect.move_ip(self.velocity[0], self.velocity[1])
+        return True
     
     def draw(self, surface):
         surface.blit(self.image, self.rect)

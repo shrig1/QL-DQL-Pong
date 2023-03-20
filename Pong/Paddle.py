@@ -2,21 +2,21 @@ import pygame
 from pygame.locals import *
 
 class Paddle(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, center_x, center_y):
         super().__init__()
         self.image = pygame.image.load("Pong\\Pong Paddle.png")
         self.rect = self.image.get_rect()
-        self.rect.center = (12, 300)
+        self.rect.center = (center_x, center_y)
 
-    def update(self):
+    def update(self, action):
         pressed_keys = pygame.key.get_pressed()
 
 
-        if self.rect.bottom < 600:
-            if pressed_keys[K_DOWN]:
+        if action == 1:
+            if self.rect.bottom < 600:
                 self.rect.move_ip(0, 6)
-        if self.rect.top > 0:
-            if pressed_keys[K_UP]:
+        elif action == 2:
+            if self.rect.top > 0:
                 self.rect.move_ip(0, -6)
     
     def draw(self, surface):
