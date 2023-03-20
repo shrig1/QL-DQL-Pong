@@ -21,6 +21,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (303, 303)
         self.velocity = random_direction()
+        self.win = 0
 
     def update(self, Paddle1, Paddle2):
         # if self.rect.colliderect(Paddle1.rect) or self.rect.colliderect(Paddle2.rect):
@@ -31,6 +32,12 @@ class Ball(pygame.sprite.Sprite):
             if (Paddle1.rect.centery - 60 < self.rect.centery < Paddle1.rect.centery + 60) or (Paddle2.rect.centery - 60 < self.rect.centery < Paddle2.rect.centery + 60):
                 self.velocity[0] *= -1
             else:
+                if self.rect.centerx == 3:
+                    self.win = -1
+                elif self.rect.centerx >= 573:
+                    self.win = 1
+                else: 
+                    self.win = 0
                 return False 
         self.rect.move_ip(self.velocity[0], self.velocity[1])
         return True

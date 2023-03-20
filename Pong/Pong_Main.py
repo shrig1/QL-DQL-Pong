@@ -4,8 +4,10 @@ from Ball import Ball
 import numpy as np
 import sys
 
+print (pygame.ver)
+
 np.set_printoptions(threshold=sys.maxsize)
-num_episodes = 10
+num_episodes = 2
 discount = 0.8
 learning_rate = 0.9
 
@@ -14,7 +16,6 @@ learning_rate = 0.9
 Q = np.zeros([808091993, 3])
 
 
-    #return (paddle1_y, paddle2_y, ball_x, ball_y, ball_v)
 
 
 def main(i):
@@ -57,7 +58,10 @@ def main(i):
 
 
         state = pack_state()
-        #noise = np.random.random((0, 2)) / (i**2)
+        print(Q[state, :])
+        #Q[state, 0] += np.random.random((0, 2)) / (i**2)
+        #Q[state, 1] += np.random.random((0, 2)) / (i**2)
+        #Q[state, 2] += np.random.random((0, 2)) / (i**2)
         action = np.argmax(Q[state, :])
 
 
@@ -77,7 +81,8 @@ def main(i):
 
 
         state2 = pack_state()
-        reward = int(game)
+        reward = int(ball.win)
+        print(reward)
         Q[state, action] = (1-learning_rate) * Q[state, action] + learning_rate * (reward + discount * np.max(Q[state2, :]))   #Bellman Equation
         state = state2
 
