@@ -7,11 +7,12 @@ import math
 import json
 
 np.set_printoptions(threshold=sys.maxsize)
-num_episodes = 5
+num_episodes = 50
 discount = 0.8
 learning_rate = 0.9
-epsilon = 0.7
-
+epsilon = 0.85
+e_decay = 0.85**(1/num_episodes)
+state = 0
 
 
 Q = {}
@@ -19,15 +20,16 @@ Q = {}
 
 def main(i):
 
-
     paddle1 = Paddle(12, 300)
     paddle2 = Paddle(600-12, 300)
     ball = Ball()
+    global epsilon
+    global state
     pygame.init()
     pygame.display.set_caption("An exciting game of pong")
     screen = pygame.display.set_mode((600, 600))
     FPS = pygame.time.Clock()
-    FPS.tick(0.4)
+    FPS.tick(30)
     DisplaySurface = pygame.display.set_mode((600, 600))
     DisplaySurface.fill((0, 0, 0))
 
@@ -53,21 +55,17 @@ def main(i):
             if event.type == pygame.QUIT:
                 running = False
         
-
-
-
         state = pack_state()
         if not state in Q.keys():
             Q[state] = [0., 0., 0.]
-        
+
         if np.random.rand() > (1 - epsilon):
             action = np.random.randint(0, 3)
         else:
             action = np.argmax(Q[state])
-
-
         paddle1.update(action)
         paddle2.update(np.random.randint(0, 3))
+        
         game = ball.update(paddle1, paddle2)
         running = game
         DisplaySurface.fill((0, 0, 0))
@@ -79,22 +77,23 @@ def main(i):
         ball.draw(DisplaySurface)
         pygame.display.update()
         array = pygame.surfarray.array2d(DisplaySurface)
-
-
         state2 = pack_state()
         reward = int(ball.win)
-        print(reward)
+
         if not state2 in Q.keys():
             Q[state2] = [0., 0., 0.]
         Q[state][action] = (1-learning_rate) * Q[state][action] + learning_rate * (reward + discount * np.max(Q[state2]))   #Bellman Equation
         state = state2
-
-
-        pygame.time.wait(100)
+        epsilon *= e_decay
+        
+        pygame.time.wait(1)
 
 
 if __name__ == "__main__":
     for i in range(1, num_episodes + 1):
         print(i)
         main(i)
-        
+        print(Q[state])
+    # for keys,values in Q.items():
+    #     print(keys)
+    #     print(values)
