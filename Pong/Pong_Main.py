@@ -6,12 +6,11 @@ import sys
 import math
 import json
 
-print (pygame.ver)
-
 np.set_printoptions(threshold=sys.maxsize)
-num_episodes = 2
+num_episodes = 5
 discount = 0.8
 learning_rate = 0.9
+epsilon = 0.7
 
 
 
@@ -46,7 +45,7 @@ def main(i):
             ball_v = 2
         elif ball.velocity == [-6, -6]:
             ball_v = 3
-        return int(str(paddle1_y) + str(paddle2_y) + str(ball_x) + str(ball_y) + str(ball_v))
+        return (paddle1_y, paddle2_y, ball_x, ball_y, ball_v)
     
     running = True
     while running: 
@@ -58,15 +57,17 @@ def main(i):
 
 
         state = pack_state()
-        #print(Q[state, :])
-        #Q[state, 0] += np.random.random((0, 2)) / (i**2)
-        #Q[state, 1] += np.random.random((0, 2)) / (i**2)
-        #Q[state, 2] += np.random.random((0, 2)) / (i**2)
-        action = np.argmax(Q[state, :])
+        if not state in Q.keys():
+            Q[state] = [0., 0., 0.]
+        
+        if np.random.rand() > (1 - epsilon):
+            action = np.random.randint(0, 3)
+        else:
+            action = np.argmax(Q[state])
 
 
         paddle1.update(action)
-        paddle2.update(np.random.randint(0, 2))
+        paddle2.update(np.random.randint(0, 3))
         game = ball.update(paddle1, paddle2)
         running = game
         DisplaySurface.fill((0, 0, 0))
@@ -83,7 +84,9 @@ def main(i):
         state2 = pack_state()
         reward = int(ball.win)
         print(reward)
-        Q[state, action] = (1-learning_rate) * Q[state, action] + learning_rate * (reward + discount * np.max(Q[state2, :]))   #Bellman Equation
+        if not state2 in Q.keys():
+            Q[state2] = [0., 0., 0.]
+        Q[state][action] = (1-learning_rate) * Q[state][action] + learning_rate * (reward + discount * np.max(Q[state2]))   #Bellman Equation
         state = state2
 
 
@@ -94,3 +97,4 @@ if __name__ == "__main__":
     for i in range(1, num_episodes + 1):
         print(i)
         main(i)
+        
