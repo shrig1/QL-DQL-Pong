@@ -3,6 +3,8 @@ from Paddle import Paddle
 from Ball import Ball
 import numpy as np
 import sys
+import math
+import json
 
 print (pygame.ver)
 
@@ -13,9 +15,7 @@ learning_rate = 0.9
 
 
 
-Q = np.zeros([808091993, 3])
-
-
+Q = {}
 
 
 def main(i):
@@ -33,8 +33,8 @@ def main(i):
     DisplaySurface.fill((0, 0, 0))
 
     def pack_state():
-        paddle1_y = int((paddle1.rect.centery - 60)/6)
-        paddle2_y = int((paddle2.rect.centery - 60)/6)
+        paddle1_y = int((math.floor(paddle1.rect.centery - 60)/12))
+        paddle2_y = int(math.floor((paddle2.rect.centery - 60)/12))
         ball_x = int((ball.rect.centerx - 27)/6)
         ball_y = int((ball.rect.centery - 3)/6)
         ball_v = 0
@@ -58,7 +58,7 @@ def main(i):
 
 
         state = pack_state()
-        print(Q[state, :])
+        #print(Q[state, :])
         #Q[state, 0] += np.random.random((0, 2)) / (i**2)
         #Q[state, 1] += np.random.random((0, 2)) / (i**2)
         #Q[state, 2] += np.random.random((0, 2)) / (i**2)
