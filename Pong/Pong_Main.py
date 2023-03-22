@@ -11,7 +11,7 @@ num_episodes = 100
 discount = 0.8
 learning_rate = 0.9
 epsilon = 0.99
-e_decay = 0.85**(1/num_episodes)
+e_decay = 0.75**(1/num_episodes)
 state = 0
 
 
@@ -62,6 +62,7 @@ def main(i):
         if np.random.rand() > (1 - epsilon):
             action1 = np.random.randint(0, 3)
         else:
+            #print("Taken q value action")
             action1 = np.argmax(Q[state])
 
         if np.random.rand() > (1 - epsilon):
@@ -91,7 +92,7 @@ def main(i):
         Q[state][action1] = (1-learning_rate) * Q[state][action1] + learning_rate * (reward1 + discount * np.max(Q[state2]))
         Q[state][action2] = (1-learning_rate) * Q[state][action2] + learning_rate * (reward2 + discount * np.max(Q[state2]))   #Bellman Equation
         state = state2
-        epsilon *= e_decay
+        
         
         #pygame.time.wait(0.5)
 
@@ -100,7 +101,9 @@ if __name__ == "__main__":
     for i in range(1, num_episodes + 1):
         print(i)
         main(i)
-        print(Q[state])
+        epsilon *= e_decay
+        print(epsilon)
+        #print(Q[state])
     # for keys,values in Q.items():
     #     print(keys)
     #     print(values)
