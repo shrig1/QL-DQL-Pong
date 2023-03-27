@@ -7,7 +7,7 @@ import math
 import json
 
 np.set_printoptions(threshold=sys.maxsize)
-num_episodes = 100
+num_episodes = 10
 discount = 0.8
 learning_rate = 0.9
 epsilon = 0.99
@@ -34,20 +34,20 @@ def main(i):
     DisplaySurface.fill((0, 0, 0))
 
     def pack_state():
-        paddle1_y = int((math.floor(paddle1.rect.centery - 60)/12))
-        paddle2_y = int(math.floor((paddle2.rect.centery - 60)/12))
-        ball_x = int((ball.rect.centerx - 27)/6)
-        ball_y = int((ball.rect.centery - 3)/6)
+        paddle1_y = str(int((math.floor(paddle1.rect.centery - 60)/12))).zfill(2)
+        paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
+        ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
+        ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
         if ball.velocity == [6, 6]:
-            ball_v = 0
+            ball_v = "0"
         elif ball.velocity == [-6, 6]:
-            ball_v = 1
+            ball_v = "1"
         elif ball.velocity == [6, -6]:
-            ball_v = 2
+            ball_v = "2"
         elif ball.velocity == [-6, -6]:
-            ball_v = 3
-        return "".join(map(str, (paddle1_y, paddle2_y, ball_x, ball_y, ball_v)))
+            ball_v = "3"
+        return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
     
     running = True
     while running: 
