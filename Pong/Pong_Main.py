@@ -7,16 +7,27 @@ import math
 import json
 
 np.set_printoptions(threshold=sys.maxsize)
-num_episodes = 10
+# num_episodes = 10
+episode_num = 0
 discount = 0.8
-learning_rate = 0.9
-epsilon = 0.99
-e_decay = 0.75**(1/num_episodes)
+learning_rate = 0
+epsilon = 0
+e_decay = 0.75**(1/1000)
+l_decay = 0.8**(1/1500)
 state = 0
 
+with open("Pong/parameters.json") as p_file:
+    params = json.load(p_file)
+    epsilon = params["epsilon"]
+    episode_num = params["episode#"]
+    learning_rate = params["learning_rate"]
+p_file.close()
 
 Q = {}
 
+with open("Pong/Pong_Q_Table.json") as file:
+    Q = json.load(file)
+file.close()
 
 def main(i):
 
@@ -39,21 +50,19 @@ def main(i):
         ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
-        if ball.velocity == [6, 6]:
-            ball_v = "0"
-        elif ball.velocity == [-6, 6]:
+        if ball.velocity == [10, 6]:
             ball_v = "1"
-        elif ball.velocity == [6, -6]:
+        elif ball.velocity == [-10, 6]:
             ball_v = "2"
-        elif ball.velocity == [-6, -6]:
+        elif ball.velocity == [10, -6]:
             ball_v = "3"
+        elif ball.velocity == [-10, -6]:
+            ball_v = "4"
+        
         return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
     
     running = True
     while running: 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
         
         state = pack_state()
         if not state in Q.keys():
@@ -93,21 +102,36 @@ def main(i):
         Q[state][action2] = (1-learning_rate) * Q[state][action2] + learning_rate * (reward2 + discount * np.max(Q[state2]))   #Bellman Equation
         state = state2
         
-        
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
         #pygame.time.wait(0.5)
 
 
 if __name__ == "__main__":
-    for i in range(1, num_episodes + 1):
-        print(i)
-        main(i)
+    while True:
+        print("Episode #: " + str(episode_num))
+        print("Epsilon: " + str(epsilon))
+        print("Learning Rate: " + str(learning_rate))
+        print("\n\n")
+        main(episode_num)
         epsilon *= e_decay
-        print(epsilon)
+        learning_rate *= l_decay
+        episode_num += 1
+        
         #print(Q[state])
     # for keys,values in Q.items():
     #     print(keys)
     #     print(values)
-
-    with open("Pong/empty_Q_Table.json", "w") as outfile:
-        json.dump(Q, outfile)
-    outfile.close()
+        with open("Pong/Pong_Q_Table.json", "w") as outfile:
+            json.dump(Q, outfile)
+        outfile.close()
+        with open("Pong/parameters.json", "w") as p_file:
+            params["episode#"] = episode_num
+            params["epsilon"] = epsilon
+            params["learning_rate"] = learning_rate
+            json.dump(params, p_file)
+        p_file.close()
