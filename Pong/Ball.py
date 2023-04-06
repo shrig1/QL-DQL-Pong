@@ -3,10 +3,10 @@ from pygame.locals import *
 import numpy as np
 
 DIRECTIONS = {
-    "top_left": [-10, -6], 
-    "top_right": [10, -6],
-    "bot_left": [-10, 6], 
-    "bot_right": [10, 6], 
+    "top_left": [-18, -6], 
+    "top_right": [18, -6],
+    "bot_left": [-18, 6], 
+    "bot_right": [18, 6], 
 }
 
 

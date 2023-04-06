@@ -50,13 +50,13 @@ def main(i):
         ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
-        if ball.velocity == [10, 6]:
+        if ball.velocity == [18, 6]:
             ball_v = "1"
-        elif ball.velocity == [-10, 6]:
+        elif ball.velocity == [-18, 6]:
             ball_v = "2"
-        elif ball.velocity == [10, -6]:
+        elif ball.velocity == [18, -6]:
             ball_v = "3"
-        elif ball.velocity == [-10, -6]:
+        elif ball.velocity == [-18, -6]:
             ball_v = "4"
         
         return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
