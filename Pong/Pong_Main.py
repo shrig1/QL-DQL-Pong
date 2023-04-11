@@ -62,6 +62,9 @@ def main(i):
         return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
     
     running = True
+    p_state = 0
+    p_action = 0
+    t_state = False
     while running: 
         
         state = pack_state()
