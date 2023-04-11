@@ -2,11 +2,13 @@ import pygame
 from pygame.locals import *
 import numpy as np
 
+np.random.seed(61761239)
+
 DIRECTIONS = {
-    "top_left": [-18, -6], 
-    "top_right": [18, -6],
-    "bot_left": [-18, 6], 
-    "bot_right": [18, 6], 
+    "top_left": [-20, -6], 
+    "top_right": [20, -6],
+    "bot_left": [-20, 6], 
+    "bot_right": [20, 6], 
 }
 
 

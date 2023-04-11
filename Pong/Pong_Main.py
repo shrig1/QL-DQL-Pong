@@ -50,13 +50,13 @@ def main(i):
         ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
-        if ball.velocity == [18, 6]:
+        if ball.velocity == [20, 6]:
             ball_v = "1"
-        elif ball.velocity == [-18, 6]:
+        elif ball.velocity == [-20, 6]:
             ball_v = "2"
-        elif ball.velocity == [18, -6]:
+        elif ball.velocity == [20, -6]:
             ball_v = "3"
-        elif ball.velocity == [-18, -6]:
+        elif ball.velocity == [-20, -6]:
             ball_v = "4"
         
         return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
@@ -93,8 +93,25 @@ def main(i):
         pygame.display.update()
         array = pygame.surfarray.array2d(DisplaySurface)
         state2 = pack_state()
-        reward1 = ball.win
-        reward2 = ball.win * -1
+        reward1 = 0
+        reward2 = 0
+
+        if ball.win == 1:
+            reward1 = ball.win
+            if action2 == 0:
+                reward2 = -0.3
+            reward2 += ball.win * -1
+        elif ball.win == -1:
+            if action1 == 0:
+                reward1 = -0.3
+            reward1 += ball.win
+            reward2 = ball.win * -1
+        else:
+            if action1 == 0:
+                reward1 = -0.3
+            if action2 == 0:
+                reward2 = -0.3
+
 
         if not state2 in Q.keys():
             Q[state2] = [0., 0., 0.]
