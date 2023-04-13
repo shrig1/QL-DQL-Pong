@@ -12,8 +12,8 @@ episode_num = 0
 discount = 0.8
 learning_rate = 0
 epsilon = 0
-e_decay = 0.75**(1/1000)
-l_decay = 0.8**(1/1500)
+e_decay = 0.75**(1/5000)
+l_decay = 0.8**(1/5000)
 state = 0
 
 with open("Pong/parameters.json") as p_file:
@@ -46,7 +46,7 @@ def main(i):
 
     def pack_state():
         paddle1_y = str(int((math.floor(paddle1.rect.centery - 60)/12))).zfill(2)
-        paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
+        # paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
         ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
@@ -59,17 +59,40 @@ def main(i):
         elif ball.velocity == [-20, -6]:
             ball_v = "4"
         
-        return  paddle1_y + paddle2_y + ball_x + ball_y + ball_v
+        return  paddle1_y + ball_x + ball_y + ball_v
+    
+    def pack_state2():
+        paddle1_y = str(int((math.floor(paddle2.rect.centery - 60)/12))).zfill(2)
+        # paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
+        ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
+        ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
+        ball_v = 0
+        if ball.velocity == [20, 6]:
+            ball_v = "2"
+        elif ball.velocity == [-20, 6]:
+            ball_v = "1"
+        elif ball.velocity == [20, -6]:
+            ball_v = "4"
+        elif ball.velocity == [-20, -6]:
+            ball_v = "3"
+        
+        return  paddle1_y + ball_x + ball_y + ball_v
     
     running = True
     p_state = 0
     p_action = 0
     t_state = False
+    p_state2 = 0
+    p_action2 = 0
+    t_state2 = False
     while running: 
         
         state = pack_state()
+        state2 = pack_state2()
         if not state in Q.keys():
             Q[state] = [0., 0., 0.]
+        if not state2 in Q.keys():
+            Q[state2] = [0., 0., 0.]
 
         if np.random.rand() > (1 - epsilon):
             action1 = np.random.randint(0, 3)
@@ -95,16 +118,19 @@ def main(i):
         ball.draw(DisplaySurface)
         pygame.display.update()
         array = pygame.surfarray.array2d(DisplaySurface)
-        state2 = pack_state()
+        n_state = pack_state()
+        n_state2 = pack_state2()
         reward1 = 0
         reward2 = 0
 
         if ball.win == 1:
             reward1 = ball.win
+            t_state = True
             if action2 == 0:
                 reward2 = -0.3
             reward2 += ball.win * -1
         elif ball.win == -1:
+            t_state = True
             if action1 == 0:
                 reward1 = -0.3
             reward1 += ball.win
@@ -116,12 +142,24 @@ def main(i):
                 reward2 = -0.3
 
 
-        if not state2 in Q.keys():
-            Q[state2] = [0., 0., 0.]
-        Q[state][action1] = (1-learning_rate) * Q[state][action1] + learning_rate * (reward1 + discount * np.max(Q[state2]))
-        Q[state][action2] = (1-learning_rate) * Q[state][action2] + learning_rate * (reward2 + discount * np.max(Q[state2]))   #Bellman Equation
-        state = state2
+        if not n_state in Q.keys():
+            Q[n_state] = [0., 0., 0.]
+        if not n_state2 in Q.keys():
+            Q[n_state2] = [0., 0., 0.]
+
+        if t_state:
+            Q[state][action1] = (1-learning_rate) * Q[state][action1] + reward1
+            # Q[state2][action2] = (1-learning_rate) * Q[state2][action2] + reward2        
+        else:
+            Q[state][action1] = (1-learning_rate) * Q[state][action1] + learning_rate * (reward1 + discount * np.max(Q[n_state]))
+            # Q[state2][action2] = (1-learning_rate) * Q[state2][action2] + learning_rate * (reward2 + discount * np.max(Q[n_state2]))   #Bellman Equation
+
+        p_state = state
+        p_state2 = state2
+        p_action = action1
+        p_action2 = action2
         
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
