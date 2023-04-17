@@ -24,9 +24,14 @@ with open("Pong/parameters.json") as p_file:
 p_file.close()
 
 Q = {}
+data = {}
 
 with open("Pong/Pong_Q_Table.json") as file:
     Q = json.load(file)
+file.close()
+
+with open("Pong/data.json") as file:
+    data = json.load(file)
 file.close()
 
 def main(i):
@@ -179,6 +184,8 @@ if __name__ == "__main__":
         epsilon *= e_decay
         learning_rate *= l_decay
         episode_num += 1
+
+        data[episode_num]
         
         #print(Q[state])
     # for keys,values in Q.items():
@@ -186,6 +193,9 @@ if __name__ == "__main__":
     #     print(values)
         with open("Pong/Pong_Q_Table.json", "w") as outfile:
             json.dump(Q, outfile)
+        outfile.close()
+        with open("Pong/data.json", "w") as datafile:
+            json.dump(data, datafile)
         outfile.close()
         with open("Pong/parameters.json", "w") as p_file:
             params["episode#"] = episode_num
