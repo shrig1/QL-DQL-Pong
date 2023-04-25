@@ -34,7 +34,7 @@ class Ball(pygame.sprite.Sprite):
             if (Paddle1.rect.centery - 60 < self.rect.centery < Paddle1.rect.centery + 60) or (Paddle2.rect.centery - 60 < self.rect.centery < Paddle2.rect.centery + 60):
                 self.velocity[0] *= -1
             else:
-                if self.rect.centerx == 27:
+                if self.rect.centerx <= 27:
                     self.win = -1
                 elif self.rect.centerx >= 573:
                     self.win = 1

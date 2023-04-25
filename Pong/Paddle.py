@@ -18,6 +18,16 @@ class Paddle(pygame.sprite.Sprite):
         elif action == 2:
             if self.rect.top > 0:
                 self.rect.move_ip(0, -6)
+
+    def update_manual(self):
+        pressed_keys = pygame.key.get_pressed()
+
+        if pressed_keys[K_DOWN]:
+            if self.rect.bottom < 600:
+                self.rect.move_ip(0, 6)
+        elif pressed_keys[K_UP]:
+            if self.rect.top > 0:
+                self.rect.move_ip(0, -6)        
     
     def draw(self, surface):
         surface.blit(self.image, self.rect)
