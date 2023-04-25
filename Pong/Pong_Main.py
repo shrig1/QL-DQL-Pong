@@ -12,7 +12,7 @@ episode_num = 0
 discount = 0.8
 learning_rate = 0
 epsilon = 0
-e_decay = 0.55**(1/3000)
+e_decay = 0.75**(1/5000)
 l_decay = 0.8**(1/5000)
 state = 0
 wins = 0
@@ -62,7 +62,6 @@ def main(i):
 
     def pack_state():
         paddle1_y = str(int((math.floor(paddle1.rect.centery - 60)/12))).zfill(2)
-        # paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
         ball_x = str(int((ball.rect.centerx - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
@@ -79,7 +78,6 @@ def main(i):
     
     def pack_state2():
         paddle1_y = str(int((math.floor(paddle2.rect.centery - 60)/12))).zfill(2)
-        # paddle2_y = str(int(math.floor((paddle2.rect.centery - 60)/12))).zfill(2)
         ball_x = str(int(((600 - ball.rect.centerx) - 27)/6)).zfill(2)
         ball_y = str(int((ball.rect.centery - 3)/6)).zfill(2)
         ball_v = 0
@@ -169,8 +167,6 @@ def main(i):
 
         if t_state:
             Q[state][action1] = (1-learning_rate) * Q[state][action1] + reward1
-            #print("t_state")
-            # pygame.time.wait(1000)
             Q[state2][action2] = (1-learning_rate) * Q[state2][action2] + reward2
             t_state = False
         else:
