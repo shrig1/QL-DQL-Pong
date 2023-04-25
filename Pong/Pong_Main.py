@@ -189,7 +189,7 @@ def main(i):
                 running = False
                 pygame.quit()
                 sys.exit()
-        #pygame.time.wait(0.5)
+        pygame.time.wait(30)
 
 
 if __name__ == "__main__":
